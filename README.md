@@ -9,33 +9,38 @@
 
 ---
 
-## 📊 Overview
+## 📊 Snapshot
 
 <table>
 <tr>
-<td width="50%" valign="top">
+<td width="25%" align="center">
 
-### Stats
-![GitHub Stats](https://github-readme-stats.vercel.app/api?username=wpdevweb&show_icons=true&theme=tokyonight&count_private=true&include_all_commits=true&hide_border=true)
+**📁 Repos**
+295 total
 
 </td>
-<td width="50%" valign="top">
+<td width="25%" align="center">
 
-### Top Languages
-![Top Langs](https://github-readme-stats.vercel.app/api/top-langs/?username=wpdevweb&layout=compact&theme=tokyonight&hide_border=true)
+**🔒 Private**
+293
 
-### Streak
-![Streak](https://streak-stats.demolab.com/?user=wpdevweb&theme=tokyonight&hide_border=true)
+</td>
+<td width="25%" align="center">
+
+**🌐 Public**
+2
+
+</td>
+<td width="25%" align="center">
+
+**📅 Since**
+Sep 2025
 
 </td>
 </tr>
 </table>
 
-<div align="center">
-
-![Activity Graph](https://github-readme-activity-graph.vercel.app/graph?username=wpdevweb&theme=react-dark&area=true&hide_border=true)
-
-</div>
+> Дані нижче тягнуться напряму з GitHub API (без сторонніх image-сервісів — без залежності від Vercel/rate-limit/402).
 
 ---
 
@@ -43,21 +48,35 @@
 
 <table>
 <tr>
-<th>Project</th><th>Stack</th><th>AI-Ready</th><th>Status</th><th>Notes</th>
+<th>Project</th><th>Stack</th><th>AI</th><th>Status</th><th>Last push</th><th>Open issues</th>
 </tr>
 <tr>
-<td>AI Agent Gateway</td><td>Node.js / LiteLLM</td><td>✅</td><td>![](https://img.shields.io/badge/-active-brightgreen)</td><td>Model routing, multi-provider proxy</td>
+<td><b>edik-meta-cms</b></td><td>TypeScript</td><td>✅</td><td>🟢 Active</td><td>~4h</td><td>2</td>
 </tr>
 <tr>
-<td>WP Studio CRM</td><td>PHP / WordPress</td><td>🔄</td><td>![](https://img.shields.io/badge/-WIP-yellow)</td><td>Dashboard + WooCommerce sync</td>
+<td><b>edpkm-control-plane</b></td><td>Rust</td><td>✅</td><td>🟢 Active</td><td>~3h</td><td>6</td>
 </tr>
 <tr>
-<td>Blockchain Contracts</td><td>Rust / Solidity</td><td>❌</td><td>![](https://img.shields.io/badge/-planning-blue)</td><td>Smart-contract tooling, ZK research</td>
+<td><b>edi-os</b></td><td>TypeScript</td><td>✅</td><td>🟢 Active</td><td>~4h</td><td>0</td>
 </tr>
 <tr>
-<td>Local LLM Stack</td><td>Docker / Ollama</td><td>✅</td><td>![](https://img.shields.io/badge/-active-brightgreen)</td><td>Self-hosted inference, staging env</td>
+<td><b>browser-broadcast-os</b></td><td>PHP</td><td>✅</td><td>🟡 WIP</td><td>~1d</td><td>0</td>
+</tr>
+<tr>
+<td><b>web-verse-spatial-runtime</b></td><td>—</td><td>🔶</td><td>🟡 WIP</td><td>~1d</td><td>0</td>
+</tr>
+<tr>
+<td><b>ediik-atlas-field</b></td><td>—</td><td>🔶</td><td>🟡 WIP</td><td>~1d</td><td>0</td>
+</tr>
+<tr>
+<td><b>edi-economic-execution-layer</b></td><td>—</td><td>❌</td><td>🔵 Planning</td><td>~1d</td><td>0</td>
+</tr>
+<tr>
+<td><b>mlv-dev</b></td><td>—</td><td>❌</td><td>🔵 Scaffold</td><td>~5h</td><td>0</td>
 </tr>
 </table>
+
+**Легенда:** 🟢 Active · 🟡 WIP · 🔵 Planning/Scaffold · ✅ AI-integrated · 🔶 Partial/manual · ❌ No AI
 
 ---
 
@@ -65,18 +84,20 @@
 
 <table>
 <tr>
-<th>Agent</th><th>Model</th><th>Open Tasks</th><th>Last Run</th><th>Health</th>
+<th>Agent</th><th>Role</th><th>Open tasks</th><th>Health</th>
 </tr>
 <tr>
-<td>OpenClaw Dev</td><td>Claude</td><td>3</td><td>auto-update</td><td>🟢</td>
+<td>OpenClaw Dev</td><td>Autonomous coding</td><td>3</td><td>🟢</td>
 </tr>
 <tr>
-<td>Hermes Router</td><td>Multi-model</td><td>1</td><td>auto-update</td><td>🟢</td>
+<td>Hermes Router</td><td>Model gateway / routing</td><td>1</td><td>🟢</td>
 </tr>
 <tr>
-<td>OpenHands Builder</td><td>GPT/Claude</td><td>2</td><td>auto-update</td><td>🟡</td>
+<td>OpenHands Builder</td><td>Build automation</td><td>2</td><td>🟡</td>
 </tr>
 </table>
+
+<sub>*Таблиця агентів ведеться вручну — GitHub API не зберігає стан агентів/тасків нативно.*</sub>
 
 ---
 
@@ -86,7 +107,7 @@
 <tr>
 <td width="33%" valign="top">
 
-**Local / Staging**
+**💻 Local / Staging**
 - Docker Compose stacks
 - Reverse proxy + SSL
 - Local LLM inference
@@ -94,7 +115,7 @@
 </td>
 <td width="33%" valign="top">
 
-**VPS / Production**
+**☁️ VPS / Production**
 - Linux, Nginx, backups
 - Multi-domain hosting
 - CI/CD pipelines
@@ -102,7 +123,7 @@
 </td>
 <td width="33%" valign="top">
 
-**Tooling**
+**🛠️ Tooling**
 - LiteLLM, model gateways
 - Cursor / Claude Code
 - GitHub Actions automation
@@ -114,9 +135,5 @@
 ---
 
 <div align="center">
-
-<!-- ACTIVITY:START -->
-<!-- This section is auto-updated by a scheduled GitHub Action -->
-<!-- ACTIVITY:END -->
-
+<sub>🔄 Оновлюється вручну · наступний крок: GitHub Action для авто-синку таблиці Project Dashboard</sub>
 </div>
