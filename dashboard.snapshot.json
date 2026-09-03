@@ -1,0 +1,61 @@
+{
+  "schema_version": "edi.public-profile-dashboard.v1",
+  "observed_at": "2026-09-03T20:33:00+03:00",
+  "observed_date": "2026-09-03",
+  "engineering_model": "Actor · Capability · Contract · Evidence",
+  "portfolio": {
+    "indexed": 314,
+    "total": 314,
+    "coverage_status": "VERIFIED",
+    "coverage_note": "inventory baseline · 2026-09-01"
+  },
+  "lanes": [
+    {
+      "id": "portfolio-inventory",
+      "name": "Portfolio inventory",
+      "done": 1,
+      "total": 1,
+      "status": "VERIFIED",
+      "detail": "exhaustive identity observation with terminal-empty proof"
+    },
+    {
+      "id": "ai-routing-federation",
+      "name": "AI routing federation",
+      "done": 4,
+      "total": 5,
+      "status": "CONTRACT_READY · runtime NOT_RUN",
+      "detail": "Gateway contract + cost adapter + local observation adapter + federation TCK; live runtime remains"
+    },
+    {
+      "id": "evidence-learning-loop",
+      "name": "Evidence learning loop",
+      "done": 3,
+      "total": 4,
+      "status": "ACTIVE",
+      "detail": "sanitized source + typed negative know-how + integration receipts; real runtime feedback remains"
+    },
+    {
+      "id": "runtime-observability",
+      "name": "Runtime observability",
+      "done": 0,
+      "total": 3,
+      "status": "NOT_RUN",
+      "detail": "live provider execution + measured route receipt + OTel/resource correlation"
+    }
+  ],
+  "domains": [
+    {"name":"Engineering Fabric","summary":"portfolio contracts, evidence, WorkGraph, integration morphisms"},
+    {"name":"AI Routing","summary":"provider abstraction, cost ranking, local-first fallback topology"},
+    {"name":"Control & Automation","summary":"authority-aware execution, task flow, bounded automation"},
+    {"name":"Memory & Knowledge","summary":"context continuity, provenance, positive/negative know-how"},
+    {"name":"Spatial Interfaces","summary":"2D/3D graph projections, visual IDE and system navigation"},
+    {"name":"Web & WordPress","summary":"enterprise CMS, WooCommerce, migration and automation tooling"},
+    {"name":"Security & DevOps","summary":"supply-chain evidence, CI cost controls, observability, recovery"},
+    {"name":"Research & Semantics","summary":"ontology, language, DSL/IR and evidence-driven exploration"}
+  ],
+  "privacy": {
+    "public_safe_aggregate_only": true,
+    "private_repo_names_included": false,
+    "runtime_api_calls_on_profile_load": 0
+  }
+}

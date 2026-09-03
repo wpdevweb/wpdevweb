@@ -1,0 +1,36 @@
+schema_version: edi.project.blueprint.v1
+id: wpdevweb-profile-dashboard
+canonical_repo: wpdevweb/wpdevweb
+phase: Build
+role: public-static-projection
+objective: >-
+  Present a modern evidence-backed public portfolio dashboard with zero repository-driven
+  network/API calls on profile load and no leakage of private repository topology.
+inputs:
+  - public-safe committed aggregate snapshot
+outputs:
+  - README.md
+contracts:
+  snapshot: edi.public-profile-dashboard.v1
+security:
+  private_repo_names: forbidden
+  secrets: forbidden
+  remote_badges_images_scripts: forbidden
+  runtime_api_calls_on_profile_load: 0
+truth:
+  percentages: explicit-gate-denominator-only
+  inventory_is_readiness: false
+  unknown_policy: preserve-unknown
+pipeline:
+  - update-snapshot
+  - review-redaction
+  - render-local
+  - verify-local
+  - review-diff
+  - git-pr-merge
+observability:
+  snapshot_file: dashboard.snapshot.json
+  policy_file: DASHBOARD_POLICY.md
+  validator: scripts/check-profile.mjs
+  renderer: scripts/render-profile.mjs
+next_gate: merge static dashboard v2 and keep future sync offline from display path
