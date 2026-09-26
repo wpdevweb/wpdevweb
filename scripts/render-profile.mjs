@@ -1,92 +1,30 @@
 #!/usr/bin/env node
+/** Deterministic static profile projection. One input: committed public-safe snapshot. */
 import fs from 'node:fs';
 import path from 'node:path';
-import {fileURLToPath} from 'node:url';
-
-const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
-const snapshot=JSON.parse(fs.readFileSync(path.join(root,'dashboard.snapshot.json'),'utf8'));
-const esc=s=>String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;');
-const pct=(done,total)=>total>0?Math.round(done*100/total):null;
-const bar=(done,total,width=10)=>{const p=pct(done,total);if(p==null)return '░'.repeat(width)+' ?';const n=Math.round(width*p/100);return '█'.repeat(n)+'░'.repeat(width-n)+` ${p}%`;};
-const gate=l=>`${l.done}/${l.total}`;
-const laneRows=snapshot.lanes.map(l=>`<tr><td><b>${esc(l.name)}</b><br><sub>${esc(l.detail)}</sub></td><td><code>${bar(l.done,l.total)}</code><br><sub>${gate(l)} gates · ${esc(l.status)}</sub></td></tr>`).join('\n');
-const domainCells=snapshot.domains.map(d=>`<td width="25%" valign="top"><b>${esc(d.name)}</b><br><sub>${esc(d.summary)}</sub></td>`);
-const domainRows=[];for(let i=0;i<domainCells.length;i+=4)domainRows.push(`<tr>${domainCells.slice(i,i+4).join('')}</tr>`);
-const readme=`<div align="center">
-
-# EDI Engineering Portfolio
-### Solution Architecture · AI Systems · Full-Stack · DevSecOps
-
-<code>local-first</code> · <code>contract-first</code> · <code>evidence-first</code> · <code>security-first</code>
-
-</div>
-
----
-
-## Portfolio telemetry
-
-<table>
-<tr>
-<td width="25%" align="center"><b>Repository inventory</b><br><code>${snapshot.portfolio.indexed}/${snapshot.portfolio.total}</code><br><sub>${bar(snapshot.portfolio.indexed,snapshot.portfolio.total)}</sub></td>
-<td width="25%" align="center"><b>Observation</b><br><code>${esc(snapshot.portfolio.coverage_status)}</code><br><sub>${esc(snapshot.portfolio.coverage_note)}</sub></td>
-<td width="25%" align="center"><b>Active engineering model</b><br><code>${esc(snapshot.engineering_model)}</code><br><sub>ownership + contracts + evidence</sub></td>
-<td width="25%" align="center"><b>Snapshot</b><br><code>${esc(snapshot.observed_date)}</code><br><sub>static · public-safe · zero-request</sub></td>
-</tr>
-</table>
-
-> Inventory coverage is **not** product completion. Per-repository readiness is evidence-gated and private; unknown percentages are intentionally not invented.
-
----
-
-## Maturity lanes
-
-<table>
-<tr><th width="55%">Lane</th><th width="45%">Gate progress</th></tr>
-${laneRows}
-</table>
-
----
-
-## System map
-
-<table>
-${domainRows.join('\n')}
-</table>
-
----
-
-## Engineering loop
-
-<pre>
-intent → context → contracts → implementation → tests
-       → evidence → merge → handoff → learning → next
-
-reuse → adapter → morph → rewrite
-facts ≠ inference · capability ≠ authority · progress ≠ readiness
-</pre>
-
-## Public dashboard semantics
-
-- README rendering performs **0 runtime API calls** from this repository.
-- No third-party badges, dynamic images, scripts or analytics are loaded.
-- Private repository names and private task topology are redacted from this public projection.
-- Percent bars are derived only from explicit gate denominators in <code>dashboard.snapshot.json</code>.
-- Detailed per-repository state belongs to the private portfolio/control-plane layer, not this public README.
-
-<details>
-<summary><b>Stack & operating principles</b></summary>
-
-<br>
-
-<code>TypeScript</code> · <code>Node.js</code> · <code>React/Next.js</code> · <code>Rust/Tauri</code> · <code>PHP/WordPress</code> · <code>Python</code> · <code>Docker</code> · <code>GitHub Actions</code>
-
-Local-first · schema-first · contract-first · security-first · observability-first · evidence-first · reversible-by-default.
-
-</details>
-
----
-
-<div align="center"><sub>Generated from a committed public-safe snapshot · observed ${esc(snapshot.observed_at)} · no live API dependency on profile load</sub></div>
-`;
-fs.writeFileSync(path.join(root,'README.md'),readme);
-console.log(JSON.stringify({ok:true,output:'README.md',snapshot:snapshot.schema_version,observed_at:snapshot.observed_at},null,2));
+import { fileURLToPath } from 'node:url';
+const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+const snapshot = JSON.parse(fs.readFileSync(path.join(root, 'dashboard.snapshot.json'), 'utf8'));
+const xml = s => String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&apos;');
+const readmeEsc = s => String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;');
+const cap = (n,d) => { if(!Number.isInteger(n)||!Number.isInteger(d)||d<=0||n<0||n>d) throw Error('invalid gate denominator'); return Math.round(100*n/d); };
+if(snapshot.schema_version!=='edi.public-profile-dashboard.v1' || !snapshot.privacy?.public_safe_aggregate_only || snapshot.privacy?.runtime_api_calls_on_profile_load!==0) throw Error('unsupported snapshot/privacy');
+if(snapshot.portfolio.indexed > snapshot.portfolio.total || snapshot.portfolio.total<=0) throw Error('invalid inventory denominator');
+const themes={dark:{bg:'#0c1524',bg2:'#14344b',fg:'#f3f6fa',sub:'#b8d2dc',grid:'#3f748c',glow:'#00cfb7',accent:'#ffce85'},light:{bg:'#f3f9fa',bg2:'#d9eaed',fg:'#10283a',sub:'#34596b',grid:'#659bad',glow:'#148d82',accent:'#a76132'}};
+function svg(theme){
+ const t=themes[theme]; if(!t) throw Error('unknown theme');
+ const nodes=[[1000,70],[1110,126],[1255,58],[1328,157],[1150,239],[1012,226],[1235,260]];
+ const edges=[[0,1],[0,5],[1,2],[1,4],[1,5],[2,3],[2,6],[3,6],[3,4],[4,5],[4,6]];
+ const lines=edges.map(([a,b])=>`<path d="M${nodes[a][0]} ${nodes[a][1]}L${nodes[b][0]} ${nodes[b][1]}" stroke="${t.grid}" stroke-opacity=".48" stroke-width="2"/>`).join('');
+ const circles=nodes.map(([x,y],i)=>`<circle cx="${x}" cy="${y}" r="${i===1?13:7}" fill="${i===1?t.accent:t.glow}" fill-opacity="${i===1?'.9':'.75'}"/>`).join('');
+ return `<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="320" viewBox="0 0 1400 320" role="img" aria-labelledby="title desc"><title id="title">EDI Engineering Portfolio</title><desc id="desc">Static ${theme} themed editorial banner, engineering network and evidence-first message</desc><defs><linearGradient id="back" x1="0" y1="0" x2="1" y2="1"><stop stop-color="${t.bg}"/><stop offset="1" stop-color="${t.bg2}"/></linearGradient><linearGradient id="line" x1="0" y1="0" x2="1" y2="0"><stop stop-color="${t.glow}"/><stop offset="1" stop-color="${t.accent}"/></linearGradient></defs><rect width="1400" height="320" fill="url(#back)"/><path d="M0 260 C360 162 605 372 935 242 S1220 248 1400 134" stroke="url(#line)" stroke-opacity=".26" stroke-width="2" fill="none"/><g>${lines}${circles}</g><path d="M68 61 H126" stroke="${t.glow}" stroke-width="4"/><text x="68" y="101" font-family="Georgia, Times New Roman, serif" font-size="23" fill="${t.sub}" letter-spacing="4">ENGINEERING  /  RESEARCH  /  SYSTEMS</text><text x="68" y="178" font-family="Georgia, Times New Roman, serif" font-size="57" font-weight="bold" fill="${t.fg}">Build things that can</text><text x="68" y="240" font-family="Georgia, Times New Roman, serif" font-size="57" font-weight="bold" fill="${t.fg}">prove they work.</text><text x="68" y="282" font-family="Georgia, Times New Roman, serif" font-size="21" fill="${t.sub}">Local-first  •  Contract-first  •  Evidence-first</text></svg>\n`;
+}
+const laneRows=snapshot.lanes.map(l=>{const p=cap(l.done,l.total),blocks=Math.round(p/10);return `| **${readmeEsc(l.name)}** | \`${'█'.repeat(blocks)}${'░'.repeat(10-blocks)}\` | **${l.done}/${l.total}** | ${readmeEsc(l.status)} |`;}).join('\n');
+const domainIcons=['🧭','⚡','🛡️','🧠','🗺️','🧩','🔐','🔬'];
+const domainRows=snapshot.domains.map((d,i)=>`| ${domainIcons[i%domainIcons.length]} **${readmeEsc(d.name)}** | ${readmeEsc(d.summary)} |`).join('\n');
+const snapDate=readmeEsc(snapshot.observed_date),stamp=readmeEsc(snapshot.observed_at);
+const markdown=`<div align="center">\n\n<picture>\n  <source media="(prefers-color-scheme: dark)" srcset="assets/hero-dark.svg">\n  <img src="assets/hero-light.svg" alt="EDI Engineering Portfolio: Build things that can prove they work. Local-first, contract-first, evidence-first." width="100%">\n</picture>\n\n<h3>Solution Architecture · AI Systems · Full-Stack · DevSecOps</h3>\n\n<p><strong>From human intent to evidence-backed software.</strong></p>\n\n<p><a href="#the-approach">The approach</a> &nbsp;·&nbsp; <a href="#what-i-build">What I build</a> &nbsp;·&nbsp; <a href="#evidence-board">Evidence board</a> &nbsp;·&nbsp; <a href="#roadmap">Roadmap</a></p>\n\n</div>\n\n> **Public data notice:** metrics below are a *dated snapshot (${snapDate})*, not live product-health measurements. No private repository topology or live API calls are exposed.\n\n## ✨ The approach\n\nProducts, agent workflows and development environments are easier to trust when **an action, its authorization and its evidence are separate things**. My engineering practice treats every software change as a small, reviewable experiment rather than a milestone claimed by narrative.\n\n\`intent → contract → smallest implementation → tests → independent evidence → learning\`\n\n| 🧭 Design for reuse | ⚙️ Build deliberately | 🧪 Verify reality | 🔒 Preserve control |\n|:--|:--|:--|:--|\n| Reuse first; new abstractions must pay for themselves | A bounded change with a reproducible input | No completion from a status label alone | Human approval and the source owner remain authoritative |\n\n## 🧩 What I build\n\n| Capability domain | Engineering focus |\n|:--|:--|\n${domainRows}\n\n<details>\n<summary><strong>My toolset and operating preferences</strong></summary>\n\nTypeScript · Node.js · React/Next.js · Rust/Tauri · PHP/WordPress · Python · Docker · GitHub Actions.\n\nLocal-first; schema-first; readable docs; native Windows/Linux workflows; security, observability and cost controls before autonomy.\n\n</details>\n\n## 🛰️ Evidence board\n\n**Snapshot ${snapDate}** · Evidence model: ${readmeEsc(snapshot.engineering_model)}\n\n| Observation | Reported value | Important boundary |\n|:--|:--|:--|\n| Repository inventory | **${snapshot.portfolio.indexed}/${snapshot.portfolio.total}** | Historical inventory baseline; not present-day fleet census |\n| Coverage classification | **${readmeEsc(snapshot.portfolio.coverage_status)}** | ${readmeEsc(snapshot.portfolio.coverage_note)} |\n| Product completion | **UNKNOWN** | Inventory coverage must not impersonate delivery readiness |\n\n| Historical maturity lane | Gate visualization | Done / total | At snapshot |\n|:--|:--|--:|:--|\n${laneRows}\n\nThese numbers come from explicit denominators in the committed public-safe snapshot, not from commit counts or marketing estimates. A later source change does not retroactively upgrade this historical report.\n\n## 🗺️ Architecture at a glance\n\n\`\`\`mermaid\nflowchart LR\n    H[Human intent] --> C[Grounded contract]\n    C --> I[Bounded implementation]\n    I --> T[Deterministic checks]\n    T --> E[Evidence receipt]\n    E --> R{Independent review}\n    R -->|accepted| K[Reusable know-how]\n    R -->|fix required| I\n    K -.-> C\n\`\`\`\n\n<details>\n<summary><strong>Terminal view · the engineering loop</strong></summary>\n\n\`\`\`text\n  HUMAN              ENGINEERING              EVIDENCE\n  intent ──────────▶ bounded change ────────▶ exact revision\n   ▲                        │                      │\n   │                        ▼                      ▼\n  learn ◀─────────── verify / review ◀────── immutable receipt\n\n  reuse  >  configure  >  adapter  >  morph  >  rewrite\n  capability ≠ authority  ·  artifact ≠ delivery  ·  status ≠ proof\n\`\`\`\n\n</details>\n\n## 🚀 Roadmap\n\nThe future roadmap is expressed as **verifiable stages**, not a promise of self-running AI today. The dated dashboard above documents historical partial progress only.\n\n| Stage | Concrete acceptance evidence | Status here |\n|:--|:--|:--|\n| 01 · Ground | Provenance-linked input and bounded contract | Design principle |\n| 02 · Build | Reproducible, isolated implementation | Per-project verification |\n| 03 · Verify | Executed tests and independently attributable receipts | Per-project verification |\n| 04 · Orchestrate | Scoped multi-agent handoff with explicit authority | Research direction |\n| 05 · Learn | Reviewed outcomes become reusable knowledge | Research direction |\n\n> To show a current release or deployment here, its source must be freshly observed, redacted for public use, and included in a new committed snapshot.\n\n## 📎 Public dashboard contract\n\n- README and its SVGs are **static, repository-local assets**: 0 third-party badges, scripts, analytics, or runtime API calls.\n- The relative, accessible SVG banners adapt to light/dark appearance; static SVGs contain **no script, foreign content, animation or external references**.\n- **No private repository names, internal project links, detailed task topology or provider credentials** are published here.\n- Evidence classes remain distinct: a local test, an approved PR and a user-accepted delivery are not interchangeable.\n- Snapshot age is explicit. Historical gate counts never imply current deployment or readiness.\n\n<div align="center"><sub>Deterministically generated from a public-safe snapshot · observed ${stamp} · local rendering, zero third-party requests</sub></div>\n`;
+const outputs=[['README.md',markdown],['assets/hero-dark.svg',svg('dark')],['assets/hero-light.svg',svg('light')]];
+const check=process.argv.includes('--check');let mismatches=[];
+for(const [rel,value] of outputs){const full=path.join(root,rel);if(check){if(!fs.existsSync(full)||fs.readFileSync(full,'utf8')!==value)mismatches.push(rel);}else{fs.mkdirSync(path.dirname(full),{recursive:true});fs.writeFileSync(full,value,'utf8');}}
+if(check && mismatches.length){console.error(JSON.stringify({ok:false,generated_drift:mismatches}));process.exitCode=1;}else console.log(JSON.stringify({ok:true,mode:check?'CHECK':'WRITE',snapshot:snapshot.observed_at,files:outputs.map(x=>x[0])}));

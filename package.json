@@ -1,11 +1,11 @@
 {
   "name": "wpdevweb-profile-dashboard",
-  "version": "2.0.0",
+  "version": "2.1.0-proposal",
   "private": true,
   "type": "module",
   "engines": {"node": ">=22"},
   "scripts": {
     "render": "node scripts/render-profile.mjs",
-    "verify": "node scripts/check-profile.mjs"
+    "verify": "node scripts/render-profile.mjs --check && node scripts/check-profile.mjs && node --test tests/*.test.mjs"
   }
 }
